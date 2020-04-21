@@ -7,77 +7,90 @@ const Node = function(data) {
 
 const Lil = function() {
   return {
-    addToStart: function(value = "") {
+    addToStart: function(value) {
       const element = Node(value);
+
       if(this.head == null) {
         this.head = element;
         this.tail = element;
       } else {
-        let tempStart = this.head;
+        element.next = this.head;
+        this.head.prev = element;
         this.head = element;
-        tempStart.last = element;
-        element.next = tempStart;
       }
     },
 
-    addToEnd: function(value = "") {
+    addToEnd: function(value) {
       const element = Node(value);
 
       if(this.tail == null) {
         this.head = element;
         this.tail = element;
       } else {
-        let tempEnd = this.tail;
-        this.tail = element;
-        tempEnd.next = element;
-        element.prev = tempEnd;
+        let current = this.head;
+
+        while(current.next != null) {
+          current = current.next;
         }
+
+        current.next = element;
+      }
     },
 
     removeFromStart: function() {
-      let out = this.head;
-      this.head = out.next;
-      this.head.prev = null;
+      let out = this.head.value;
+      this.head = this.head.next;
 
-      return out.value;
+      return out;
     },
 
     removeFromEnd: function() {
-      let out = this.tail;
-      console.log("out is ")
-      console.log(out)
-      this.tail = out.prev;
-      this.tail.next = null;
+      let current = this.head;
 
+      while(current.next.next != null) {
+        current = current.next;
+      }
+
+      const out = current.next.value;
+      current.next = null;
+      return out;
+    },
+
+    getAt: function(index) {
+      if(this.head == null) {
+        return null;
+      }
+
+      let current = this.head
+      for(let i = 0; i < index; i++) {
+        current = current.next;
+      }
+
+      return current.value;
+    },
+
+    removeAt: function(index) {
+      if(this.head == null) {
+        return null;
+      }
+
+      let current = this.head
+      for(let i = 0; i < index - 1; i++) {
+        current = current.next;
+      }
+
+      let out = current.next;
+      let after = out.next;
+
+      current.next = after;
       return out.value;
     },
 
     head: null,
-    value: "",
+    value: undefined,
     tail: null
   }
 }
-
-
-const lil = Lil();
-lil.addToEnd(10);
-lil.addToEnd(20);
-lil.addToEnd(30);
-lil.addToEnd(40);
-
-console.log("Value is " + lil.next.next.value);
-console.log(lil.removeFromEnd());
-console.log(lil.tail);
-
-function printObj(obj) {
-  console.log("VALUE: " + obj.value);
-  console.log("PREV: ");
-  console.log(obj.prev);
-  console.log("END OF PREV.  NEXT:");
-  console.log(obj.next);
-  console.log("END OF NEXT\n");
-}
-
 
 if (typeof Node == 'undefined') {
   Node = undefined;
